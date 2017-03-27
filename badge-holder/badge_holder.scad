@@ -18,6 +18,7 @@ module cardWindow(cardWidth, cardHeight, cardThick) {
     windowSizeZ = CARD_THICK + 2 * BORDER_THICK + 2;
     translate([WINDOW_OVERHANG, WINDOW_OVERHANG, -BORDER_THICK - 1])
         cube([windowSizeX, windowSizeY, windowSizeZ], [cardWidth / 2, cardHeight / 2, cardThick / 2]);
+
 }
 
 // This creates a whole frame that totally surrounds the badge.  Later on we will remove each half before
@@ -37,13 +38,15 @@ module cardFrame(cardWidth, cardHeight, cardThick) {
 }
 
 module leftFrame(cardWidth, cardHeight, cardThick) {
+    // Mask off the right side of the frame
+    maskSizeX = cardWidth;
+    maskSizeY = cardHeight + 2 * WALL_THICK + 2;
+    maskSizeZ = cardThick + 2 * BORDER_THICK + 2;
+    
     difference() {
         cardFrame(cardWidth, cardHeight, cardThick);
         
-        // Mask off the right side of the frame
-        maskSizeX = cardWidth;
-        maskSizeY = cardHeight + 2 * WALL_THICK + 2;
-        maskSizeZ = cardThick + 2 * BORDER_THICK + 2;
+        
         
         translate([cardWidth / 2, -WALL_THICK-1, -BORDER_THICK-1])
             cube([maskSizeX, maskSizeY, maskSizeZ], [cardWidth / 2, charHeight / 2, cardThick / 2]);
@@ -77,16 +80,18 @@ module leftFrame(cardWidth, cardHeight, cardThick) {
         }
             
         
-}
+} 
 
 module rightFrame(cardWidth, cardHeight, cardThick) {
+     // Mask off the left side of the frame
+     maskSizeX = cardWidth;
+     maskSizeY = cardHeight + 2 * WALL_THICK + 2;
+     maskSizeZ = cardThick + 2 * BORDER_THICK + 2;
+    
     difference() {
         cardFrame(cardWidth, cardHeight, cardThick);
         
-        // Mask off the left side of the frame
-        maskSizeX = cardWidth;
-        maskSizeY = cardHeight + 2 * WALL_THICK + 2;
-        maskSizeZ = cardThick + 2 * BORDER_THICK + 2;
+       
         
         translate([-cardWidth / 2 , -WALL_THICK-1, -BORDER_THICK-1])
             cube([maskSizeX, maskSizeY, maskSizeZ], [cardWidth / 2, charHeight / 2, cardThick / 2]);
@@ -124,11 +129,11 @@ module rightFrame(cardWidth, cardHeight, cardThick) {
         
 }
 
-CARD_WIDTH=50;
-CARD_HEIGHT=80;
+CARD_WIDTH=15;
+CARD_HEIGHT=20;
 CARD_THICK=2;
 
-$fa=1;
+$fa=20;
 
 leftFrame(CARD_WIDTH, CARD_HEIGHT, CARD_THICK);
 
