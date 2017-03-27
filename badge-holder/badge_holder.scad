@@ -129,11 +129,11 @@ module rightFrame(cardWidth, cardHeight, cardThick) {
         
 }
 
-CARD_WIDTH=15;
-CARD_HEIGHT=20;
+CARD_WIDTH=50;
+CARD_HEIGHT=80;
 CARD_THICK=2;
 
-$fa=20;
+$fa=1;
 
 leftFrame(CARD_WIDTH, CARD_HEIGHT, CARD_THICK);
 
