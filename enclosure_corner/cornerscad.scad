@@ -10,7 +10,7 @@ echo("SCREW_OFFSET=", SCREW_OFFSET);
 
 SCREW_HEAD_DIAMETER=7.1;
 SCREW_THREAD_DIAMETER=4;
-SCREW_NUT_WIDTH=7;
+SCREW_NUT_WIDTH=8.5;
 
 module screwHole(screwLength, holeDiameter, nutWidth, headDiameter, recessDepth)
 {
@@ -66,14 +66,14 @@ module joint() {
         
     translate([SCREW_OFFSET, 0, SCREW_OFFSET])
     rotate(90,[-1,0,0])
-    screwHole(CORNER_ENTIRE_WIDTH, SCREW_THREAD_DIAMETER, SCREW_NUT_WIDTH, SCREW_HEAD_DIAMETER, 1);
+    screwHole(CORNER_ENTIRE_WIDTH, SCREW_THREAD_DIAMETER, SCREW_NUT_WIDTH, SCREW_HEAD_DIAMETER, 1.5);
    
     translate([0, SCREW_OFFSET, SCREW_OFFSET])
     rotate(90,[0,1,0])
-    screwHole(CORNER_ENTIRE_WIDTH, SCREW_THREAD_DIAMETER, SCREW_NUT_WIDTH, SCREW_HEAD_DIAMETER, 1);
+    screwHole(CORNER_ENTIRE_WIDTH, SCREW_THREAD_DIAMETER, SCREW_NUT_WIDTH, SCREW_HEAD_DIAMETER, 1.5);
     
     translate([SCREW_OFFSET, SCREW_OFFSET, 0])
-    screwHole(CORNER_ENTIRE_WIDTH, SCREW_THREAD_DIAMETER, SCREW_NUT_WIDTH, SCREW_HEAD_DIAMETER, 1);
+    screwHole(CORNER_ENTIRE_WIDTH, SCREW_THREAD_DIAMETER, SCREW_NUT_WIDTH, SCREW_HEAD_DIAMETER, 1.5);
     
    
   }
@@ -83,6 +83,7 @@ module joint() {
 
 
 // Rotate for printing
+rotate(45,[0,0,1])
 rotate(-90,[-1,1,0])
 joint();
 
