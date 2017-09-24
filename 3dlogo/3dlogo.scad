@@ -95,20 +95,44 @@ module LetterS(letterSize, letterThick, curveRadius)
   translate([-letterThick, 0, letterSize / 2 - letterThick / 2 + curveRadius])
     cube([letterThick, letterThick, littleSectsHeight]);
   
-  /**
-  // Letter will be in Y and Z planes.  Thickness from X=0 towards negative X.
-  bottomHeight = letterSize / 2 + letterThick;
-  LetterL(bottomHeight, letterSize, letterThick, curveRadius);
+}
+
+// Just goes up +z
+module LetterLittleI(letterSize, letterThick)
+{
+  // Going to have 3/5 of letter be stick part of i
+  // Then on top of that a ball
   
-  translate([-letterThick, 0, letterSize])
-    rotate(a=180, v=[0,1,0])
-      LetterL(bottomHeight, letterSize, letterThick, curveRadius);
-  **/
+  stickLen = letterSize / 5 * 3;
+  stickCubeLen = stickLen - letterThick;
+  
+  // cube part of stick
+  translate([-letterThick, 0, letterThick / 2])
+    cube([letterThick, letterThick, stickCubeLen]);
+  
+  // bottom rounded part of stick
+  translate([-letterThick, letterThick / 2, letterThick / 2])
+    rotate(a=90, v=[0,1,0])
+      cylinder(h=letterThick, r=letterThick / 2);
+  
+  translate([-letterThick, letterThick / 2,  + stickCubeLen + letterThick / 2])
+    rotate(a=90, v=[0,1,0])
+      cylinder(h=letterThick, r=letterThick / 2);
+
+  translate([-letterThick, letterThick / 2, stickLen + letterThick * 2 / 5])
+  rotate(a=90, v=[0,1,0])
+    cylinder(h=letterThick, r=letterThick / 2);
+
 }
 
 
 LetterC(CUBE_SIZE, LETTER_THICK, 20);
 
+translate([-CUBE_SIZE, CUBE_SIZE, CUBE_SIZE - LETTER_THICK])
+rotate(a=90, v=[0,1,0])
+rotate(a=90, v=[1,0,0])
+LetterLittleI(CUBE_SIZE, LETTER_THICK);
+
 translate([0, CUBE_SIZE, 0])
   rotate(a=90, v=[0,0,1])
-    LetterS(CUBE_SIZE, LETTER_THICK, 15);
+    LetterS(CUBE_SIZE, LETTER_THICK, 20);
