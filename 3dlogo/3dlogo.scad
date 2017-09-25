@@ -1,6 +1,9 @@
 CUBE_SIZE=80;
 LETTER_THICK=15;
 
+ANNIVERSARY_COIN_DIAMETER= 44.7;
+ANNIVERSARY_COIN_THICK = 3.4;
+
 
 // Letter will go up in +Z, out in +Y, thick in -X
 module LetterL(letterHeight, letterWidth, letterThick, curveRadius)
@@ -125,6 +128,23 @@ module LetterLittleI(letterSize, letterThick)
 
 }
 
+module CoinHolder(coinDiameter, coinThick)
+{
+  COIN_WALL_THICK=3.5;
+  
+  difference()
+  {
+    cylinder(h=coinThick + COIN_WALL_THICK, r=coinDiameter / 2 + 2 * COIN_WALL_THICK);
+    
+    translate([0,0,COIN_WALL_THICK])
+    cylinder(h=coinThick + 1, r=coinDiameter / 2);
+  }
+}
+
+translate([-CUBE_SIZE / 2, CUBE_SIZE / 2, CUBE_SIZE / 2])
+rotate(a=45, v=[0,0,-1])
+rotate(a=45, v=[-1,0,0])
+CoinHolder(ANNIVERSARY_COIN_DIAMETER, ANNIVERSARY_COIN_THICK);
 
 LetterC(CUBE_SIZE, LETTER_THICK, 20);
 
