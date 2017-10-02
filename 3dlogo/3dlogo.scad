@@ -141,18 +141,25 @@ module CoinHolder(coinDiameter, coinThick)
   }
 }
 
-translate([-CUBE_SIZE / 2, CUBE_SIZE / 2, CUBE_SIZE / 2])
-rotate(a=45, v=[0,0,-1])
-rotate(a=45, v=[-1,0,0])
-CoinHolder(ANNIVERSARY_COIN_DIAMETER, ANNIVERSARY_COIN_THICK);
+module Logo3d()
+{
+  translate([-CUBE_SIZE / 2, CUBE_SIZE / 2, CUBE_SIZE / 2])
+    rotate(a=45, v=[0,0,-1])
+      rotate(a=45, v=[-1,0,0])
+        CoinHolder(ANNIVERSARY_COIN_DIAMETER, ANNIVERSARY_COIN_THICK);
 
-LetterC(CUBE_SIZE, LETTER_THICK, 20);
+  LetterC(CUBE_SIZE, LETTER_THICK, 20);
 
-translate([-CUBE_SIZE, CUBE_SIZE, CUBE_SIZE - LETTER_THICK])
+  translate([-CUBE_SIZE, CUBE_SIZE, CUBE_SIZE - LETTER_THICK])
+  rotate(a=90, v=[0,1,0])
+  rotate(a=90, v=[1,0,0])
+  LetterLittleI(CUBE_SIZE, LETTER_THICK);
+
+  translate([0, CUBE_SIZE, 0])
+    rotate(a=90, v=[0,0,1])
+      LetterS(CUBE_SIZE, LETTER_THICK, 20);
+}
+
+// Rotate letter for better printing
 rotate(a=90, v=[0,1,0])
-rotate(a=90, v=[1,0,0])
-LetterLittleI(CUBE_SIZE, LETTER_THICK);
-
-translate([0, CUBE_SIZE, 0])
-  rotate(a=90, v=[0,0,1])
-    LetterS(CUBE_SIZE, LETTER_THICK, 20);
+  Logo3d();
