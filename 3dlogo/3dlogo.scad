@@ -141,12 +141,15 @@ module CoinHolder(coinDiameter, coinThick)
   }
 }
 
-module Logo3d()
+module Logo3d(printCoinHolder)
 {
-  translate([-CUBE_SIZE / 2, CUBE_SIZE / 2, CUBE_SIZE / 2])
-    rotate(a=45, v=[0,0,-1])
-      rotate(a=45, v=[-1,0,0])
-        CoinHolder(ANNIVERSARY_COIN_DIAMETER, ANNIVERSARY_COIN_THICK);
+  if (printCoinHolder != 0)
+  {
+    translate([-CUBE_SIZE / 2, CUBE_SIZE / 2, CUBE_SIZE / 2])
+      rotate(a=45, v=[0,0,-1])
+        rotate(a=45, v=[-1,0,0])
+          CoinHolder(ANNIVERSARY_COIN_DIAMETER, ANNIVERSARY_COIN_THICK);
+  }
 
   LetterC(CUBE_SIZE, LETTER_THICK, 20);
 
@@ -162,4 +165,4 @@ module Logo3d()
 
 // Rotate letter for better printing
 rotate(a=90, v=[0,1,0])
-  Logo3d();
+  Logo3d(0);     // Change the 0 to a 1 to print the coin holder part
