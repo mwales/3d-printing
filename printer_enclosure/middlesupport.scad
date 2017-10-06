@@ -30,8 +30,6 @@ module joint() {
 }
 
 
-
-
 // Rotate for printing
 rotate(-90,[1,0,0])
 joint();
