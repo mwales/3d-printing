@@ -1,4 +1,4 @@
-int counter = 0;
+// Light detection on input Digital 2
 
 #define NUM_READINGS 3
 unsigned long timerReadings[NUM_READINGS];
@@ -8,8 +8,6 @@ long lastReading = 0;
 bool readingsReady = false;
 
 int readIndex = 0;
-
-int isrCount = 0;
 
 char buffer[50];
 
@@ -21,10 +19,7 @@ void myIsr();
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(115200);
-  Serial.print("Startup!\n");
 
-  // Initialize reading stuructures
-  //timerReadings = malloc(NUM_READINGS * sizeof(int));
 
   for(int i = 0; i < NUM_READINGS; i++)
   {
@@ -36,9 +31,6 @@ void setup() {
   readIndex = 0;
   
   attachInterrupt(digitalPinToInterrupt(2), myIsr, RISING);
-
-
-
   
 }
 
@@ -47,54 +39,47 @@ void loop() {
 
   while(1)
   {
-    delay(250);
+    delay(100);
+  
+    // for(int i = 0; i < NUM_READINGS; i++)
+    // {
+    //   sprintf(buffer, "Reading %d = %lu\n", i, timerReadings[i]);
+    //   Serial.print(buffer);
+    /// }
 
-    if (!readingsReady)
+    // The laser will pulse 3 times for every rotation, so we can just sum up all the timings to get our reading
+    unsigned long rotationPeriod = 0;
+    for(int i = 0; i < NUM_READINGS; i++)
     {
-      Serial.print("Not ready (");
-      Serial.print(isrCount);
-      Serial.print(")\n");
+      rotationPeriod += timerReadings[i];
+    }
+
+    unsigned long msSinceBoot = millis();
+    int tenths = msSinceBoot / 100 % 10;
+    int secs = msSinceBoot / 1000;
+    
+    int rpm;
+    
+    if (rotationPeriod == 0)
+    {
+      rpm = 0;
     }
     else
     {
-//      for(int i = 0; i < NUM_READINGS; i++)
-//      {
-//        
-//        sprintf(buffer, "Rea ding %d = %lu\n", i, timerReadings[i]);
-//        Serial.print(buffer);
-//        //Serial.print(i);
-//        //Serial.print(" = ");
-//        //Serial.print(timerReadings[i]);
-//        //Serial.print("\n");
-//      }
-
-      unsigned long rotationPeriod = 0;
-      for(int i = 0; i < NUM_READINGS; i++)
-      {
-        rotationPeriod += timerReadings[i];
-      }
-
-      unsigned long msSinceBoot = millis();
-      int tenths = msSinceBoot / 100 % 10;
-      int secs = msSinceBoot / 1000;
-      
-      int rpm = (MICROSECS_PER_MIN / rotationPeriod);
-      Serial.print(secs);
-      Serial.print(".");
-      Serial.print(tenths);
-      Serial.print(" RPM = ");
-      Serial.print(rpm);
-      Serial.print("\n");
-
+      rpm = (MICROSECS_PER_MIN / rotationPeriod);
     }
     
+    Serial.print(secs);
+    Serial.print(".");
+    Serial.print(tenths);
+    Serial.print(" RPM = ");
+    Serial.print(rpm);
+    Serial.print("\n");
   }
 }
 
 void myIsr()
 {
-  isrCount++;
-  
   unsigned long currentTimerVal = micros();
 
   if (lastReading == 0)
@@ -108,12 +93,6 @@ void myIsr()
   lastReading = currentTimerVal;
 
   timerReadings[readIndex] = currentDiff;
-
-//  Serial.print("ISR> Index = ");
-//  Serial.print(readIndex);
-//  Serial.print(", ");
-//  Serial.print(currentDiff);
-//  Serial.print("\n");
 
   readIndex++;
 
