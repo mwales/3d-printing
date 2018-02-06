@@ -45,7 +45,7 @@ dimensions to the printable area.
 
 ## Todo
 
-* I probably should provide a recess in the mouting hole for a screw head,
+* (DONE!) I probably should provide a recess in the mouting hole for a screw head,
   hopefully the slop will allow me to put my phone in the cradle while a
   screw is installed
 

@@ -116,12 +116,19 @@ module phoneCavity()
 module wallmount()
 {
   HOLE_DIA = 4.5;
+  
+  HEAD_DIA = 9;
+  HEAD_DEPTH = 2.5;
+  
   difference()
   {
     cylinder(r=HOLE_DIA / 2 + WALL_THICK, h=WALL_THICK);
     
     translate([0,0,-1])
-    cylinder(r=HOLE_DIA / 2, h = WALL_THICK + 2);
+      cylinder(r=HOLE_DIA / 2, h = WALL_THICK + 2);
+    
+    translate([0,0, WALL_THICK - HEAD_DEPTH])
+      cylinder(r=HEAD_DIA / 2, h = WALL_THICK + 1);
   }
 }
 
@@ -194,9 +201,9 @@ intersection()
   printerConstraints();
   
   // Determines what to show / print.  Uncomment 1 of the following lines
-  wholeModel();
+  // wholeModel();
   // topPrintable();
-  // bottomPrintable();  
+  bottomPrintable();  
   
 }
 
