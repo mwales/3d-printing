@@ -33,6 +33,8 @@ dimensions to the printable area.
 
 ### Whole unit
 
+![With Phone In It](pics/with_phone.png)
+
 ![Before diving into pieces](renders/whole-1.png)
 
 ![Before diving into pieces 2](renders/whole-2.png)
