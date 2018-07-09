@@ -28,5 +28,14 @@ Holds my Bluetooth headphones or my cell phone
 
 ![Bluetooth / Phone Holder](headphone/renders/whole-1.png)
 
+## [POE Network Switch Mounting Bracket](switch_bracket)
 
+I have a Leviton Structured Media Network enclosure in my house that has
+all the household network wiring cables going to it.  I need to add a POE
+switch to power and network all of my security cameras.  The enclosure has
+holes all through it that you can mount their brand equipment in very easily.
+This is my effort to make a bracket to mount non-Leviton brand equipment in
+the enclosure.
+
+![Switch Bracket](switch_bracket/switch_bracket.png)
 
