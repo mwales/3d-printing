@@ -20,7 +20,7 @@ LEVITON_HOLE_DIA = 5;
 LEVITON_HOLE_HEIGHT = 2;
 
 BRACKET_THICKNESS = 4;
-BRACKET_GRABBER_LEN = 20;
+BRACKET_GRABBER_LEN = 15;
 BRACKET_WIDTH = LEVITON_HOLE_SPACING_HORZ + 15 * 2;
 
 SWITCH_LEVITATE_HEIGHT = 10;
@@ -34,8 +34,20 @@ module AngleBracket(bracketToHoleDist)
              [-BRACKET_GRABBER_LEN - BRACKET_THICKNESS, SWITCH_LEVITATE_HEIGHT + 1],
              [-1, SWITCH_LEVITATE_HEIGHT + 1],
              [-1, SWITCH_LEVITATE_HEIGHT + SWITCH_HEIGHT + 2 * BRACKET_THICKNESS],
+             [0, SWITCH_LEVITATE_HEIGHT + SWITCH_HEIGHT + 2 * BRACKET_THICKNESS],
              [bracketToHoleDist + 15, BRACKET_THICKNESS],
              [bracketToHoleDist + 15, 0] ]);
+}
+
+module MiddleSupport()
+{
+   linear_extrude(BRACKET_WIDTH) 
+   polygon([ [0,0],
+             [-8, SWITCH_LEVITATE_HEIGHT + 1],
+             [0, SWITCH_LEVITATE_HEIGHT + 1],
+             [0, SWITCH_LEVITATE_HEIGHT ],
+             [5, BRACKET_THICKNESS],
+             [5, 0] ]);
 }
 
 module Grabber()
@@ -46,7 +58,6 @@ module Grabber()
    difference()
    {
 
-   // translate([0,0,FULL_GRABBER_HEIGHT])
       cube([BRACKET_WIDTH,
            BRACKET_GRABBER_LEN + BRACKET_THICKNESS,
            FULL_GRABBER_HEIGHT]);
@@ -86,8 +97,6 @@ module Mount(bracketLen)
 
       translate([15 + LEVITON_HOLE_SPACING_HORZ, 15, 2])
       cylinder(h = BRACKET_THICKNESS + 2,d = LEVITON_HOLE_DIA + 4);
-
-
    }
 }
 
@@ -108,11 +117,12 @@ module Bracket(distFromHoleToSwitch)
    AngleBracket(distFromHoleToSwitch - BRACKET_THICKNESS);
 
    // Middle support if needed
-   // translate([BRACKET_WIDTH / 2 + BRACKET_THICKNESS / 2, 0, 0])
-   // rotate(a=90, v=[0,-1,0]) 
-   // rotate(a=-90, v=[0,0,1])
-   // AngleBracket(distFromHoleToSwitch - BRACKET_THICKNESS);
-
+   // I broke my first print in half trying to remove supports, hoping this will make
+   // it stronger so it doesn't happen again.
+   translate([BRACKET_WIDTH, 0, 0])
+   rotate(a=90, v=[0,-1,0]) 
+   rotate(a=-90, v=[0,0,1])
+   MiddleSupport();
 
    Mount(distFromHoleToSwitch - BRACKET_THICKNESS + 15);
 }
