@@ -129,7 +129,7 @@ module Bracket(distFromHoleToSwitch)
 
 $fn=100;
 
-Bracket(22.5);
+Bracket(22);
 
 
 
