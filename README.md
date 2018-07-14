@@ -39,5 +39,5 @@ the enclosure.
 
 ![Switch Bracket](switch_bracket/switch_bracket.png)
 
-![Holding Switch with Bracket](switch_bracket/holding_bracket.jpg)
+![Holding Switch with Bracket](switch_bracket/holding_switch.jpg)
 
