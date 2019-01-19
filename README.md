@@ -41,3 +41,13 @@ the enclosure.
 
 ![Holding Switch with Bracket](switch_bracket/holding_switch.jpg)
 
+## [Turbofan](turbofan)
+
+![Turbofan fan blade](turbofan/turbofan.png)
+
+Working on a project to try to add a DC powered jet fan to a pinewood derby
+car.  Not sure if I can really effectivly print the small fan blades, or glue
+them together and have them not fall apart, but figured it might be fun to try.
+
+(Not really legal for pinewood derby)
+
