@@ -3,6 +3,7 @@ FAN_INNER_RADIUS=12;
 
 BEARING_OUTER_DIA=12.7; // 1/2 inch
 BEARING_INNER_DIA=6.36;  // 1/4 inch
+BEARING_WIDTH=4.76;
 
 NOSE_LENGTH=17;
 
@@ -111,16 +112,73 @@ module fanNose()
   
 }
 
+module bearing_outer_holder()
+{
+  difference()
+  {
+    union()
+    {
+    translate([-2.5,0,0])
+      cube([5,BEARING_OUTER_DIA/2+15,BEARING_WIDTH]);
+    
+      translate([0,0,-1])
+    cylinder(h=BEARING_WIDTH+1.5, r=BEARING_OUTER_DIA/2+5);
+    }
+    
+    cylinder(h=BEARING_WIDTH+1.5, r=BEARING_OUTER_DIA/2);
+    
+    translate([0,0,-2])
+    cylinder(h=5, r=BEARING_OUTER_DIA/2-1.3);
+  }
+}
 
+module driveShaftSpacer(width)
+{
+  difference()
+  {
+  cylinder(h=width, r=BEARING_INNER_DIA/2+1.5);
+    
+  translate([0,0,-1])
+  cylinder(h=width+2, r=BEARING_INNER_DIA/2+.3);
+  }
+  
+}
+
+// My intent is to use the same shroud on the front and rear of the engine.  I will
+// measure and fit a center section to join the two shrouds in the middle
+module turbine_shroud_end()
+{
+  // Set the bearing inside the shroud a little bit
+  translate([0,0,10])
+    bearing_outer_holder();
+  
+  translate([-2.5,8,10])
+      cube([5,25,BEARING_WIDTH]);
+  
+  difference()
+  {
+    cylinder(h=25, r=FAN_RADIUS+5);
+    
+    translate([0,0,-1])
+    cylinder(h=27, r=FAN_RADIUS+2);
+  }
+  
+  // Rounded front edge
+  rotate(90,[0,0,1])
+  rotate_extrude(convexity=10)  
+  translate([FAN_RADIUS+3.5,0,0])  
+  circle(r=1.5);
+}
 
 // Uncomment 1 at a time to print
 
 // fanNose();
 // fanDrive1();
- fanDrive2();
+// fanDrive2();
+// driveShaftSpacer(3);
+turbine_shroud_end();
 
 
-
-$fn=1000;
+$fn=100;
 
 
