@@ -7,6 +7,10 @@ BEARING_WIDTH=4.76;
 
 NOSE_LENGTH=17;
 
+MOTOR_GEAR_DIA=7;
+NUM_TEETH=12;
+MOTOR_GEAR_WIDTH=5.5;
+
 // Single fan blade
 module fan_blade(angle, width)
 {  
@@ -14,17 +18,17 @@ module fan_blade(angle, width)
     square([width+10,1.5]); 
 }
 
-module driveShaft(dsRad)
+module driveShaft(dsRad, offset=19, spacerLen=2)
 {
   // shaft for bearing / next fan
-  translate([19,0,0,])
+  translate([offset,0,0,])
     rotate(a=90,v=[0,1,0])
       cylinder(h=15,r=dsRad);
 
   // offset bearing
-  translate([19,0,0,])
+  translate([offset,0,0,])
     rotate(a=90,v=[0,1,0])
-    cylinder(h=2,r=dsRad+.5);
+    cylinder(h=spacerLen,r=dsRad+.5);
 }
 
 module fan(blade_angle, spacing, width)
@@ -125,7 +129,7 @@ module bearing_outer_holder()
     cylinder(h=BEARING_WIDTH+1.5, r=BEARING_OUTER_DIA/2+5);
     }
     
-    cylinder(h=BEARING_WIDTH+1.5, r=BEARING_OUTER_DIA/2);
+    cylinder(h=BEARING_WIDTH+1.5, r=BEARING_OUTER_DIA/2+.1);
     
     translate([0,0,-2])
     cylinder(h=5, r=BEARING_OUTER_DIA/2-1.3);
@@ -170,6 +174,41 @@ module turbine_shroud_end()
   circle(r=1.5);
 }
 
+module motor_gear()
+{
+  TEETH_ANGLE=360/NUM_TEETH;
+  TOOTH_SIZE = 1.5;
+  for(i = [0:TEETH_ANGLE:360-TEETH_ANGLE])
+  {
+    rotate(i,[0,0,1])
+    translate([MOTOR_GEAR_DIA/2+.5,0,0])
+    rotate(45, [0,0,1])
+    translate([-TOOTH_SIZE/2,-TOOTH_SIZE/2,0])
+    cube([TOOTH_SIZE,TOOTH_SIZE,MOTOR_GEAR_WIDTH]);
+  }
+  
+  difference()
+  {
+    cylinder(h=MOTOR_GEAR_WIDTH,r=MOTOR_GEAR_DIA/2+3);
+    
+    translate([0,0,-1])
+    cylinder(h=MOTOR_GEAR_WIDTH+2,r=MOTOR_GEAR_DIA/2+.5);
+    
+  }
+  
+} 
+
+module gear_shaft()
+{
+  motor_gear();
+  translate([0,0,MOTOR_GEAR_WIDTH-.1])
+  cylinder(h=2.1, r=MOTOR_GEAR_DIA/2+3);
+  
+  //translate([0,0,MOTOR_GEAR_WIDTH-.1])
+  rotate(90,[0,-1,0])
+  driveShaft(3.18, MOTOR_GEAR_WIDTH + 2, 3);
+}
+
 // Uncomment 1 at a time to print
 
 // fanNose();
@@ -177,7 +216,7 @@ module turbine_shroud_end()
 // fanDrive2();
 // driveShaftSpacer(3);
 turbine_shroud_end();
-
+//gear_shaft();
 
 $fn=100;
 
