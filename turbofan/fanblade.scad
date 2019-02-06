@@ -209,14 +209,83 @@ module gear_shaft()
   driveShaft(3.18, MOTOR_GEAR_WIDTH + 2, 3);
 }
 
+module shroudCoupler()
+{
+  JOINT_LEN = 5;
+  COUPLER_LEN = 24;
+  
+  wholeLen = COUPLER_LEN + 2 * JOINT_LEN;
+  
+  difference()
+  {
+    hull()
+    {
+      cylinder(h=wholeLen, r=FAN_RADIUS+8);
+      
+      translate([-FAN_RADIUS-8,-22,0])
+      cube([10,44,wholeLen]);
+      
+      translate([FAN_RADIUS+5,-11,0])
+      cube([3,22,wholeLen]);
+    }
+    // Main fan area
+    translate([0,0,-1])
+    cylinder(h=wholeLen+2, r=FAN_RADIUS+2);
+    
+    // Joint area
+    translate([0,0,-1])
+    cylinder(h=JOINT_LEN+1, r=FAN_RADIUS+5.1);
+    
+    // Joint area
+    translate([0,0,COUPLER_LEN+JOINT_LEN])
+    cylinder(h=JOINT_LEN+1, r=FAN_RADIUS+5.1);
+    
+    // LED strip area
+    LED_WIDTH=10;
+    LED_KEEPOUT_WIDTH=LED_WIDTH+2;
+    
+    translate([0,0,JOINT_LEN + (COUPLER_LEN - LED_KEEPOUT_WIDTH)/2])
+    cylinder(h=LED_KEEPOUT_WIDTH, r=FAN_RADIUS+5.5);
+    
+    // Wiring hole
+    translate([-FAN_RADIUS-10,-5,wholeLen/2-5])
+    cube([30,10,10]);
+    
+  }
+}
+
+module shroudCouplerBottom()
+{
+  difference()
+  {
+    shroudCoupler();
+  
+    translate([0,-2*FAN_RADIUS, -2 * FAN_RADIUS])
+    cube([FAN_RADIUS*2, FAN_RADIUS*6, FAN_RADIUS*6]);
+  }
+}
+
+module shroudCouplerTop()
+{
+  difference()
+  {
+    shroudCoupler();
+    
+    rotate(180,[0,-1,0])
+    translate([0,-2*FAN_RADIUS, -2 * FAN_RADIUS])
+    cube([FAN_RADIUS*2, FAN_RADIUS*6, FAN_RADIUS*6]);
+  }
+}
 // Uncomment 1 at a time to print
 
 // fanNose();
 // fanDrive1();
 // fanDrive2();
 // driveShaftSpacer(3);
-turbine_shroud_end();
-//gear_shaft();
+// turbine_shroud_end();
+// gear_shaft();
+shroudCouplerBottom();
+// shroudCouplerTop();
 
 $fn=100;
 
