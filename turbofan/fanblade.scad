@@ -18,12 +18,12 @@ module fan_blade(angle, width)
     square([width+10,1.5]); 
 }
 
-module driveShaft(dsRad, offset=19, spacerLen=2)
+module driveShaft(dsRad, offset=19, spacerLen=2, shaftLen=15)
 {
   // shaft for bearing / next fan
   translate([offset,0,0,])
     rotate(a=90,v=[0,1,0])
-      cylinder(h=15,r=dsRad);
+      cylinder(h=shaftLen,r=dsRad);
 
   // offset bearing
   translate([offset,0,0,])
@@ -206,7 +206,7 @@ module gear_shaft()
   
   //translate([0,0,MOTOR_GEAR_WIDTH-.1])
   rotate(90,[0,-1,0])
-  driveShaft(3.18, MOTOR_GEAR_WIDTH + 2, 3);
+  driveShaft(3.18, MOTOR_GEAR_WIDTH + 2, 3,22);
 }
 
 module shroudCoupler()
@@ -276,16 +276,57 @@ module shroudCouplerTop()
     cube([FAN_RADIUS*2, FAN_RADIUS*6, FAN_RADIUS*6]);
   }
 }
+
+module halfDonut(inner, outer)
+{
+  difference()
+  {
+    cylinder(h=3,r=outer);
+    
+    translate([0,0,-1])
+    cylinder(h=5,r=inner);
+    
+    translate([.01,-outer-1,-1])
+    cube(outer*2+2, outer*2+2, 5);
+  }
+}
+
+module shroudClip()
+{
+  difference()
+  {
+    hull()
+    {
+      cube([74,3,3]);
+    
+      translate([74/2-34/2-3,3,0])
+        cube([34+6,3,3]);
+    };
+    
+    translate([74/2-34.1/2,-1,-1])
+    cube([34.1,4,5]);
+  }
+  
+  translate([0,-1.5,0])
+  halfDonut(1.5,4.5);
+  
+  translate([74,-1.5,0])
+  rotate(180,[0,0,1])
+  halfDonut(1.5,4.5);
+}
+
+
 // Uncomment 1 at a time to print
 
 // fanNose();
-// fanDrive1();
+//fanDrive1();
 // fanDrive2();
 // driveShaftSpacer(3);
 // turbine_shroud_end();
-// gear_shaft();
-shroudCouplerBottom();
+gear_shaft();
+// shroudCouplerBottom();
 // shroudCouplerTop();
+// shroudClip();
 
 $fn=100;
 
