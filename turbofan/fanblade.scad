@@ -316,17 +316,115 @@ module shroudClip()
 }
 
 
+MOTOR_HEIGHT=15;
+MOTOR_WIDTH=20;
+MOTOR_CASE_DEPTH=19;
+MOTOR_SHAFT_KEEPOUT_DIA=7.5;
+
+module motorKeepout()
+{
+  intersection()
+  {
+    translate([-30/2, -MOTOR_HEIGHT/2+.1, 0])
+      cube([30,MOTOR_HEIGHT+.2,  MOTOR_CASE_DEPTH+10]); 
+    
+    translate([0,0,-1])
+    cylinder(h=MOTOR_CASE_DEPTH+12, r=(MOTOR_WIDTH + .2)/2);
+  }
+  
+  translate([-8, -MOTOR_HEIGHT/2-20, 4])
+  cube([16,MOTOR_HEIGHT/2+20, MOTOR_CASE_DEPTH+10]);
+  
+  translate([0,0,-4.5])
+  cylinder(h=5, r=MOTOR_SHAFT_KEEPOUT_DIA/2+.1);
+}
+
+module motorMount()
+{
+  difference()
+  {
+    cylinder(h=19+2.5, r=MOTOR_WIDTH / 2 + 2);
+    
+    translate([0,0,2.5])
+    motorKeepout();
+  }
+  
+  intersection()
+  {
+    cylinder(h=50, r=MOTOR_WIDTH / 2 + 2);
+    
+    translate([-6, 8.1, 2.5 + MOTOR_CASE_DEPTH - .1])
+    difference()
+    {
+    
+      cube([12, 2.5, 25 - MOTOR_CASE_DEPTH +6]);
+    
+      translate([2,-1,6.1])
+      cube([8, 5, 3]);
+    }
+  }
+}
+
+module motorPin()
+{
+  
+  
+  intersection()
+  {
+    translate([0,0,2.5+19+.1])
+    cylinder(h=50, r=MOTOR_WIDTH / 2 + 2);
+    
+    union()
+    {
+      translate([-6, 10.7, 2.5 + MOTOR_CASE_DEPTH - .1])
+        cube([12,4, 25 - MOTOR_CASE_DEPTH +6]);
+    
+      translate([-7.8/2, 8.1-2.75, 2.5+25.1]) 
+        cube([7.8,10, 2.8]);
+    }
+  } 
+}
+
+module motorMountToCar()
+{
+  translate([0, 38, 0])
+  motorMount();
+  
+  difference()
+  {
+    translate([-10, 0, -8])
+      cube([20, 6, 12]);
+    
+    translate([0,38,-10])
+      cylinder(h=10, r=35.1);
+  }
+  
+  translate([3,0,0])
+  rotate(90, [0,-1,0])
+  linear_extrude(6)
+  polygon(points=[ [0,0], 
+                   [0, 38 - MOTOR_WIDTH / 2 + 2],
+                   [6.4, 38 - MOTOR_WIDTH / 2 + 2],
+                   [6.4, 20], 
+                   [4,0]] );
+
+}
+
+
 // Uncomment 1 at a time to print
 
 // fanNose();
-//fanDrive1();
+// fanDrive1();
 // fanDrive2();
 // driveShaftSpacer(3);
 // turbine_shroud_end();
-gear_shaft();
+// gear_shaft();
 // shroudCouplerBottom();
 // shroudCouplerTop();
 // shroudClip();
+motorMountToCar();
+
+//motorPin();
 
 $fn=100;
 
