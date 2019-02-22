@@ -1,22 +1,12 @@
-/*********************************************************************
- This is an example for our nRF51822 based Bluefruit LE modules
 
- Pick one up today in the adafruit shop!
-
- Adafruit invests time and resources providing this open source code,
- please support Adafruit and open-source hardware by purchasing
- products from Adafruit!
-
- MIT license, check LICENSE for more information
- All text above, and the splash screen below must be included in
- any redistribution
-*********************************************************************/
 
 #include <Arduino.h>
 #include <SPI.h>
 #include "Adafruit_BLE.h"
 #include "Adafruit_BluefruitLE_SPI.h"
 #include "Adafruit_BluefruitLE_UART.h"
+
+#include <Adafruit_NeoPixel.h>
 
 #include "BluefruitConfig.h"
 
@@ -60,25 +50,20 @@
     #define MODE_LED_BEHAVIOUR          "MODE"
 /*=========================================================================*/
 
-// Create the bluefruit object, either software serial...uncomment these lines
-/*
-SoftwareSerial bluefruitSS = SoftwareSerial(BLUEFRUIT_SWUART_TXD_PIN, BLUEFRUIT_SWUART_RXD_PIN);
-
-Adafruit_BluefruitLE_UART ble(bluefruitSS, BLUEFRUIT_UART_MODE_PIN,
-                      BLUEFRUIT_UART_CTS_PIN, BLUEFRUIT_UART_RTS_PIN);
-*/
-
-/* ...or hardware serial, which does not need the RTS/CTS pins. Uncomment this line */
-// Adafruit_BluefruitLE_UART ble(BLUEFRUIT_HWSERIAL_NAME, BLUEFRUIT_UART_MODE_PIN);
-
-/* ...hardware SPI, using SCK/MOSI/MISO hardware SPI pins and then user selected CS/IRQ/RST */
+// Create the bluefruit object hardware SPI, using SCK/MOSI/MISO hardware SPI pins and then user selected CS/IRQ/RST */
 Adafruit_BluefruitLE_SPI ble(BLUEFRUIT_SPI_CS, BLUEFRUIT_SPI_IRQ, BLUEFRUIT_SPI_RST);
 
-/* ...software SPI, using SCK/MOSI/MISO user-defined SPI pins and then user selected CS/IRQ/RST */
-//Adafruit_BluefruitLE_SPI ble(BLUEFRUIT_SPI_SCK, BLUEFRUIT_SPI_MISO,
-//                             BLUEFRUIT_SPI_MOSI, BLUEFRUIT_SPI_CS,
-//                             BLUEFRUIT_SPI_IRQ, BLUEFRUIT_SPI_RST);
+// Which pin on the Arduino is connected to the NeoPixels?
+// On a Trinket or Gemma we suggest changing this to 1
+#define NEO_PIXEL_PIN            20
 
+// How many NeoPixels are attached to the Arduino?
+#define NUMPIXELS      20
+
+// When we setup the NeoPixel library, we tell it how many pixels, and which pin to use to send signals.
+// Note that for older NeoPixel strips you might need to change the third parameter--see the strandtest
+// example for more information on possible values.
+Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUMPIXELS, NEO_PIXEL_PIN, NEO_GRB + NEO_KHZ800);
 
 // A small helper
 void error(const __FlashStringHelper*err) {
@@ -110,15 +95,6 @@ void setup(void)
   }
   Serial.println( F("OK!") );
 
-  if ( FACTORYRESET_ENABLE )
-  {
-    /* Perform a factory reset to make sure everything is in a known state */
-    Serial.println(F("Performing a factory reset: "));
-    if ( ! ble.factoryReset() ){
-      error(F("Couldn't factory reset"));
-    }
-  }
-
   /* Disable command echo from Bluefruit */
   ble.echo(false);
 
@@ -131,6 +107,8 @@ void setup(void)
   Serial.println();
 
   ble.verbose(false);  // debug info is a little annoying after this point!
+
+  pixels.begin(); // This initializes the NeoPixel library.
 
   /* Wait for connection */
   while (! ble.isConnected()) {
@@ -159,36 +137,230 @@ void printHelpToPhone()
   ble.println("Help Menu");
   ble.println("? = This help");
   ble.println("k = KITT Scanner Mode");
+  ble.println("p = Police State");
+  ble.println("i = Idle State");
 }
 
 int currentState = 0;
 #define IDLE_STATE 0
 #define KITT_SCANNER_STATE 1
+#define POLICE_SCANNER_STATE 2
 
 int stateCounter = 0;
 
-void stopState(int stateNum)
+
+void shutOffScannerLeds()
 {
-  switch(stateNum)
+  // Set all scanner LEDs to off
+  for(int i = 0; i < 8; i++)
+  {
+    pixels.setPixelColor(i, pixels.Color(0,0,0)); // off
+  }
+
+  pixels.show(); // This sends the updated pixel color to the hardware.
+}
+
+void shutOffAllLeds()
+{
+  // Set all scanner LEDs to off
+  for(int i = 0; i < 20; i++)
+  {
+    pixels.setPixelColor(i, pixels.Color(0,0,0)); // off
+  }
+
+  pixels.show(); // This sends the updated pixel color to the hardware.
+}
+
+//***************************************************
+// KITT functions
+//***************************************************
+
+void stopKittState()
+{
+  shutOffScannerLeds();
+}
+
+void doKittScannerState()
+{
+  // 16 Scanner states.  0 - 7 lit scanning up, 0-7  lit scanning down
+  int ledPosition = stateCounter & 0x0f;
+
+  if (ledPosition >= 8)
+  {
+    // scanning back down states!
+    ledPosition = 15 - ledPosition;
+  }
+
+  // Set all LEDs to off
+  for(int i = 0; i < 8; i++)
+  {
+    pixels.setPixelColor(i, pixels.Color(0,0,0)); // off
+  }
+
+  // Set current LED on
+  pixels.setPixelColor(ledPosition, pixels.Color(255, 0, 0));
+  
+  switch(ledPosition)
+  {
+    case 0:
+      //pixels.setPixelColor(ledPosition - 2, pixels.Color(5, 0, 0));
+      //pixels.setPixelColor(ledPosition - 1, pixels.Color(50, 0, 0));
+      pixels.setPixelColor(ledPosition + 1, pixels.Color(50, 0, 0));
+      pixels.setPixelColor(ledPosition + 2, pixels.Color(5, 0, 0));
+      break;
+      
+    case 1:
+      //pixels.setPixelColor(ledPosition - 2, pixels.Color(5, 0, 0));
+      pixels.setPixelColor(ledPosition - 1, pixels.Color(50, 0, 0));
+      pixels.setPixelColor(ledPosition + 1, pixels.Color(50, 0, 0));
+      pixels.setPixelColor(ledPosition + 2, pixels.Color(5, 0, 0));
+      break;
+      
+    case 2:
+    case 3:
+    case 4:
+    case 5:
+      // Simple, non-edge cases
+      pixels.setPixelColor(ledPosition - 2, pixels.Color(5, 0, 0));
+      pixels.setPixelColor(ledPosition - 1, pixels.Color(50, 0, 0));
+      pixels.setPixelColor(ledPosition + 1, pixels.Color(50, 0, 0));
+      pixels.setPixelColor(ledPosition + 2, pixels.Color(5, 0, 0));
+      break;
+      
+    case 6:
+      pixels.setPixelColor(ledPosition - 2, pixels.Color(5, 0, 0));
+      pixels.setPixelColor(ledPosition - 1, pixels.Color(50, 0, 0));
+      pixels.setPixelColor(ledPosition + 1, pixels.Color(50, 0, 0));
+      //pixels.setPixelColor(ledPosition + 2, pixels.Color(5, 0, 0));
+      break;
+      
+    case 7:
+      pixels.setPixelColor(ledPosition - 2, pixels.Color(5, 0, 0));
+      pixels.setPixelColor(ledPosition - 1, pixels.Color(50, 0, 0));
+      //pixels.setPixelColor(ledPosition + 1, pixels.Color(50, 0, 0));
+      //pixels.setPixelColor(ledPosition + 2, pixels.Color(5, 0, 0));
+      break;
+  }
+
+  pixels.show(); // This sends the updated pixel color to the hardware.
+}
+
+//***************************************************
+// Police Mode functions
+//***************************************************
+
+#define RED_NP   255, 0,   0
+#define BLUE_NP  0,   0,   255
+#define WHITE_NP 255, 255, 255
+void stopPoliceState()
+{
+  shutOffAllLeds();
+}
+
+void doPoliceState()
+{
+  // 4 Scanner states.
+  //   White + Blue
+  //   Red + White
+  //   Blue + White
+  //   White + Red
+  
+  int ledPosition = stateCounter & 0x03;
+
+  switch(ledPosition)
+  {
+    case 0:
+      pixels.setPixelColor(0, pixels.Color(WHITE_NP));
+      pixels.setPixelColor(7, pixels.Color(WHITE_NP));
+      pixels.setPixelColor(1, pixels.Color(BLUE_NP));
+      pixels.setPixelColor(6, pixels.Color(BLUE_NP));     
+      pixels.setPixelColor(2, pixels.Color(BLUE_NP));
+      pixels.setPixelColor(5, pixels.Color(BLUE_NP)); 
+      break;
+
+    case 1:
+      pixels.setPixelColor(0, pixels.Color(RED_NP));
+      pixels.setPixelColor(7, pixels.Color(RED_NP));
+      pixels.setPixelColor(1, pixels.Color(WHITE_NP));
+      pixels.setPixelColor(6, pixels.Color(WHITE_NP));
+      pixels.setPixelColor(2, pixels.Color(RED_NP));
+      pixels.setPixelColor(5, pixels.Color(RED_NP)); 
+      break;
+
+    case 2:
+      pixels.setPixelColor(0, pixels.Color(BLUE_NP));
+      pixels.setPixelColor(7, pixels.Color(BLUE_NP));
+      pixels.setPixelColor(1, pixels.Color(WHITE_NP));
+      pixels.setPixelColor(6, pixels.Color(WHITE_NP));      
+      pixels.setPixelColor(2, pixels.Color(BLUE_NP));
+      pixels.setPixelColor(5, pixels.Color(BLUE_NP)); 
+      break;
+
+    case 3:
+      pixels.setPixelColor(0, pixels.Color(WHITE_NP));
+      pixels.setPixelColor(7, pixels.Color(WHITE_NP));
+      pixels.setPixelColor(1, pixels.Color(RED_NP));
+      pixels.setPixelColor(6, pixels.Color(RED_NP));      
+      pixels.setPixelColor(2, pixels.Color(RED_NP));
+      pixels.setPixelColor(5, pixels.Color(RED_NP)); 
+      break;
+  }
+
+  // Jet leds will light up too
+  if (ledPosition & 0x01)
+  {
+    // RED Jet LEDs
+    for(int i = 8; i < 20; i++)
+    {
+      pixels.setPixelColor(i, pixels.Color(RED_NP));
+    }
+  }
+  else
+  {
+    // Blue Jet LEDs
+    for(int i = 8; i < 20; i++)
+    {
+      pixels.setPixelColor(i, pixels.Color(BLUE_NP));
+    }
+  }
+
+  pixels.show(); // This sends the updated pixel color to the hardware.
+}
+
+void stopState()
+{
+  switch(currentState)
   {
     case KITT_SCANNER_STATE:
       ble.println("Stopping KITT");
+      stopKittState();
+      break;
+
+    case POLICE_SCANNER_STATE:
+      ble.println("Stopping Police");
+      stopPoliceState();
       break;
 
     default:
       ble.print("Exitting state #");
-      ble.println(stateNum);
+      ble.println(currentState);
   }
 }
 
 void startState(int stateNum)
 {
+  stopState();
+  
   stateCounter = 0;
   
   switch(stateNum)
   {
     case KITT_SCANNER_STATE:
       ble.println("Starting KITT");
+      break;
+
+    case POLICE_SCANNER_STATE:
+      ble.println("Starting Police State");
       break;
 
     default:
@@ -200,11 +372,26 @@ void startState(int stateNum)
 }
 
 
+
 void doStateFunctions()
 {
   Serial.print("Doing state functions (counter = ");
   Serial.print(stateCounter);
   Serial.println(")");
+
+  switch(currentState)
+  {
+    case KITT_SCANNER_STATE:
+      doKittScannerState();
+      break;
+
+    case POLICE_SCANNER_STATE:
+      doPoliceState();
+      break;
+      
+    default:
+    Serial.println("Unknown state");
+  }
   
   delay(100);
 
@@ -253,9 +440,17 @@ void loop(void)
 
     if (c == 'k')
     {
-      stopState(currentState);
-
       startState(KITT_SCANNER_STATE);
+    }
+
+    if (c == 'p')
+    {
+      startState(POLICE_SCANNER_STATE);
+    }
+
+    if (c == 'i')
+    {
+      startState(IDLE_STATE);
     }
   }
 

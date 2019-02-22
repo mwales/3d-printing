@@ -121,6 +121,29 @@ module front_body_keepouts2()
   //polygon(points=[[0,0],[100,0],[130,50],[30,50]]);
 }
 
+BATTERY_DEPTH=18;
+BATTERY_WIDTH=27;
+BATTERY_BOX_HEIGHT=25;
+module batteryHolder()
+{
+  difference()
+  {
+    cube([CAR_WIDTH-.2, 61 + .4 +BATTERY_DEPTH + 2 * 3, 3]);
+   
+    translate([5, -1, -1])
+    cube([CAR_WIDTH - 10, 60, 5]);
+  }
+  
+  difference()
+  {
+    translate([ (CAR_WIDTH - BATTERY_WIDTH - 6)/2, 60.4, 2])
+    cube([BATTERY_WIDTH+6, BATTERY_DEPTH+6, BATTERY_BOX_HEIGHT+1]);
+    
+    translate([ (CAR_WIDTH - BATTERY_WIDTH)/2, 63.4, 3])
+    cube([BATTERY_WIDTH, BATTERY_DEPTH, BATTERY_BOX_HEIGHT+1]);
+  }
+}
+
 module roof_parts(width)
 {
   
@@ -435,7 +458,8 @@ module roofExtender(height)
 // roof2();
 // front_clip();
 //roofExtender(6);
-roof3();
+// roof3();
+batteryHolder();
 
 
 $fn=500;
