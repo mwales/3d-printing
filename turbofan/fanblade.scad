@@ -411,6 +411,21 @@ module motorMountToCar()
 }
 
 
+module fanAndMotorPlate()
+{
+  difference()
+  {
+     
+    cube([43,60,6]);
+    
+    // Wiring hole
+    translate([(43-10)/2,12.3,-1])
+    cube([10,10,10]);
+  }
+}
+
+
+
 // Uncomment 1 at a time to print
 
 // fanNose();
@@ -422,7 +437,9 @@ module motorMountToCar()
 // shroudCouplerBottom();
 // shroudCouplerTop();
 // shroudClip();
-motorMountToCar();
+//motorMountToCar();
+fanAndMotorPlate();
+
 
 //motorPin();
 
