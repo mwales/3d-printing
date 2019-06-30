@@ -54,3 +54,6 @@ them together and have them not fall apart, but figured it might be fun to try.
 ## [Power Supply Case](power_supply_enclosure/readme.md)
 
 Case for cheap DC-DC power supply from web.
+
+![Power Supply Case](power_supply_enclosure/assembled.jpg)
+
