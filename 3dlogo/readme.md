@@ -38,4 +38,6 @@ Removed supports, and inserted challenge coin, which fitted perfectly!
 
 ![Coin View](Photos/3dlogo-coin_view.jpg)
 
+# Combine old si and new csi logo into 1 holder
 
+![Combined Logos](combine_si_csi_logo.png)
