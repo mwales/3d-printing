@@ -51,25 +51,27 @@ module wire_routing_block()
 //wire_box();
 module drill_hole()
 {
-    translate([1.5 / 2, 1.5 / 2, -10])
-        cylinder(h=30, d = 1.5, center=false);    
+    drill_dia = 1.7;
+    //translate([-drill_dia / 2, -drill_dia / 2, -10])
+    translate([0, 0, -10])
+        cylinder(h=30, d = drill_dia, center=false);    
 }
 
 difference()
 {
-    hole_distance = 17.5 - 3 + 1.5 - 1.3 / 2;
+    hole_distance = 14.5;
     translate([-2.5, -2.5, 0])
-        cube([hole_distance + 2.5 * 2 + 1.3,  6, 2]);
+        cube([hole_distance + 2.5 * 2,  6, 1]);
     
     drill_hole();
     
     translate([hole_distance, 0, 0])
         drill_hole();
     
-    translate([5.2 - .125, 1.5, -2.5])
+    translate([5.2 - 1.5 - .125, 1, -1])
         wireBox(.9);
 }
 
-translate([5.2 - .125, 1.5, -2.5])
+translate([5.2 - 1.5 - .125, 1, -1])
         wire_routing_block();
 $fn=100;
